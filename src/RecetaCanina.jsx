@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import logo from "./assets/logo.png";
 import confetti from "canvas-confetti";
@@ -9,6 +9,7 @@ import html2pdf from "html2pdf.js"; // Importamos html2pdf.js
 import "./styles/ticketForm.css";
 
 function TicketForm() {
+  const [dateTime, setDateTime] = useState(new Date());
   //const navigate = useNavigate(); // Crear el hook de navegación
   // Estado para almacenar múltiples imágenes
   const [images, setImages] = useState([]);
@@ -67,7 +68,7 @@ function TicketForm() {
     // Configuración de html2pdf.js
     const opt = {
       margin: 0,
-      filename: "ticket-servicio.pdf",
+      filename: "Receta.pdf",
       image: { type: "jpeg", quality: 0.99 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
@@ -117,9 +118,10 @@ function TicketForm() {
         sexo: "",
         edad: "",
         peso: "",
+        temperatura: "",
         tutor: "",
         medico: "",
-        cedula:"",
+        cedula: "",
         costo: "",
         description: "",
         signature: null,
@@ -134,42 +136,55 @@ function TicketForm() {
     //  navigate("/dashboard"); // Redirige específicamente a /dashboard
   };
 
-  return (
-    <div
-      className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md bg-gradient-to-br from-gray-100 bg-cyan-00"
-      ref={formRef}
-    >
-      <header className="flex flex-col md:flex-row items-center justify-between bg-white shadow-md p-4 rounded-lg">
-        {/* Logo */}
-        <img
-          src={logo}
-          alt="Logo"
-          className="w-24 h-24 md:w-20 md:h-20 rounded-full shadow-lg shadow-gray-500/50 mb-4 md:mb-3"
-        />
+  //dame la fecha
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDateTime(new Date());
+    }, 1000); // Actualiza cada segundo
 
-        {/* Información de contacto */}
-        <div className="text-sm text-black-600 text-justify mb-4 md:mb-0 md:ml-4">
-          <p className="text-lg md:text-xl mb-1">📞 (938) 118 02 89</p>
-          <p className="text-lg md:text-xl mb-1">📞 (938) 125 56 28</p>
-          <p className="text-lg md:text-xl mb-1">
-            📧 animalhome_servet@hotmail.com
+    return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonta
+  }, []);
+  return (
+    <div className="max-w-4xl mx-auto p-6 bg-white" ref={formRef}>
+      {/* Logo */}
+      <img
+        src={logo}
+        alt="Logo"
+        className="w-24 mx-auto h-24 md:w-20 md:h-20 rounded-full shadow-lg shadow-gray-500/50 mb-2 md:mb-2"
+      />
+       <p className="text-xs md:text-lg mb-1 flex items-center gap-2">
+            📧 <span>animalhome_servet@hotmail.com</span>
+          </p>
+
+      <div className="grid grid-cols-2 md:flex-row justify-between items-start md:items-center gap-4">
+        {/* Contacto */}
+        <div className="text-xs text-black-600 text-justify">
+          <p className="text-xs md:text-lg mb-1">📞 (938) 118 02 89</p>
+          <p className="text-xs md:text-lg mb-1">📞 (938) 125 56 28</p>
+          <p className="text-xs md:text-base mb-1">Fecha:</p>
+          <p className="text-xs md:text-base mb-1">
+           🕒 {dateTime.toLocaleDateString()} - {dateTime.toLocaleTimeString()}
           </p>
         </div>
 
         {/* Dirección */}
-        <div className="text-sm text-black-600 text-justify mb-4 md:mb-0 md:ml-4">
-          <p className="text-lg md:text-xl mb-1">
+        <div className="text-xs text-black-600 text-justify">
+          <p className="text-xs md:text-lg mb-1">
             🏠 Av. Puerto de Campeche No. 123
           </p>
-          <p className="text-lg md:text-xl mb-1">Col. Volcanes, C.P 24155</p>
-          <p className="text-lg md:text-xl mb-1">
+          <p className="text-xs md:text-lg mb-1">Col. Volcanes, C.P 24155</p>
+          <p className="text-xs md:text-lg mb-1">
             Ciudad del Carmen, Campeche.
           </p>
         </div>
-      </header>
+
+        {/* Fecha */}
+        <div className="text-xs text-black-700 text-justify">
+          
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit}>
-      
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="margen block text-sm font-medium text-gray-900">
@@ -252,9 +267,6 @@ function TicketForm() {
             </select>
           </div>
 
-
-
-          
           <div>
             <label className="margen block text-sm font-medium text-gray-900">
               Edad
@@ -270,17 +282,13 @@ function TicketForm() {
             />
           </div>
 
-
-
-
           <div>
             <label className="margen block text-sm font-medium text-gray-900">
               Peso:
             </label>
-
             <div className="flex items-center border border-gray-300 rounded-lg">
               {/* Símbolo $ */}
-              <span className="px-4 py-2 text-gray-500">KG</span>
+
               <input
                 type="number"
                 name="peso"
@@ -290,6 +298,26 @@ function TicketForm() {
                 placeholder="Ingrese el peso"
                 required
               />
+              <span className="px-4 py-2 text-gray-500">KG</span>
+            </div>
+          </div>
+
+          <div>
+            <label className="margen block text-sm font-medium text-gray-900">
+              Temperatura:
+            </label>
+            <div className="flex items-center border border-gray-300 rounded-lg">
+              {/* Símbolo $ */}
+              <input
+                type="number"
+                name="temperatura"
+                value={formData.temperatura}
+                onChange={handleChange}
+                className="texto w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-red-700"
+                placeholder="Temperatura"
+                required
+              />{" "}
+              <span className="px-4 py-2 text-gray-500">°C</span>
             </div>
           </div>
 
@@ -297,101 +325,101 @@ function TicketForm() {
             <label className="margen block text-sm font-medium text-gray-900">
               Tutor:
             </label>
-              <input
-                type="name"
-                name="tutor"
-                value={formData.tutor}
-                onChange={handleChange}
-                className="texto w-60 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-red-700"
-                placeholder="Nombre del tutor"
-                required
-              />
+            <input
+              type="name"
+              name="tutor"
+              value={formData.tutor}
+              onChange={handleChange}
+              className="texto w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-red-700"
+              placeholder="Nombre del tutor"
+              required
+            />
           </div>
 
           <div className="col-span-2">
-    <label className="margen block text-sm font-medium text-gray-900">
-      MVZ:
-    </label>
-    <input
-      type="name"
-      name="medico"
-      value={formData.medico}
-      onChange={handleChange}
-      className="texto w-full px-1 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-red-700"
-      placeholder="MVZ"
-      required
-    />
-  </div>
+            <label className="margen block text-sm font-medium text-gray-900">
+              MVZ:
+            </label>
+            <input
+              type="name"
+              name="medico"
+              value={formData.medico}
+              onChange={handleChange}
+              className="texto w-full px-1 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-red-700"
+              placeholder="MVZ"
+              required
+            />
+          </div>
 
-  <div>
-    <label className="margen block text-sm font-medium text-gray-900">
-      Cédula:
-    </label>
-    <select
-      name="cedula"
-      value={formData.cedula}
-      onChange={handleChange}
-      className="texto margen w-full px-1 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-red-700"
-      required
-    >
-      <option value="" disabled>
-        Selecciona una opción
-      </option>
-      <option value="8509642">8509642</option>
-      <option value="8140814">8140814</option>
-      <option value="13976760">13976760</option>
-      <option value="13308906">13308906</option>
-      <option value="13333238">13333238</option>
-    </select>
-  </div>
+          <div>
+            <label className="margen block text-sm font-medium text-gray-900">
+              Cédula:
+            </label>
+            <select
+              name="cedula"
+              value={formData.cedula}
+              onChange={handleChange}
+              className="texto margen w-full px-1 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-red-700"
+              required
+            >
+              <option value="" disabled>
+                Selecciona una opción
+              </option>
+              <option value="8509642">8509642</option>
+              <option value="8140814">8140814</option>
+              <option value="13976760">13976760</option>
+              <option value="13308906">13308906</option>
+              <option value="13333238">13333238</option>
+            </select>
+          </div>
 
-  <div className="col-span-3">
-    <label className="margen block text-sm font-medium text-gray-900">
-      Indicaciones:
-    </label>
-    <textarea
-      name="description"
-      value={formData.description}
-      onChange={handleChange}
-      className="w-full px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-red-700"
-      placeholder="Recomendaciones"
-      rows="5"
-      required
-    />
-  </div>
+          <div className="col-span-3">
+            <label className="margen block text-sm font-medium text-gray-900">
+              Indicaciones:
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-red-700"
+              placeholder="Recomendaciones"
+              rows="5"
+              required
+            />
+          </div>
 
-  <div className="col-span-3">
-    <label className="margen block text-sm font-medium text-gray-900">
-      Firma del MVZ:
-    </label>
-    <div className="border border-gray-300 rounded-lg p-4">
-      <SignatureCanvas
-        ref={signatureRef}
-        penColor="black"
-        canvasProps={{
-          className: "w-full h-40",
-        }}
-      />
-      <div className="flex justify-end mt-2">
-        <button
-          type="button"
-          onClick={handleClearSignature}
-          className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:ring focus:ring-red-300"
-        >
-          Limpiar
-        </button>
+          <div className="col-span-3">
+            <label className="margen block text-sm font-medium text-gray-900">
+              Firma del MVZ:
+            </label>
+            <div className="border border-gray-300 rounded-lg p-4">
+              <SignatureCanvas
+                ref={signatureRef}
+                penColor="black"
+                canvasProps={{
+                  className: "w-full h-25",
+                }}
+              />
+              <div className="flex justify-end mt-2">
+                <button
+                  type="button"
+                  onClick={handleClearSignature}
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:ring focus:ring-red-300"
+                >
+                  Limpiar
+                </button>
 
-        <button
-          type="button"
-          onClick={handleSaveSignature}
-          className="ml-2 px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 focus:ring focus:ring-green-300"
-        >
-          Guardar
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+                <button
+                  type="button"
+                  onClick={handleSaveSignature}
+                  className="ml-2 px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 focus:ring focus:ring-green-300"
+                >
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="mt-6">
           <button
